@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../build/react.js"></script>
+  <script src="../build/react-dom.js"></script>
+  <script src="../build/browser.min.js"></script>
+  <script src="../build/jquery.min.js"></script>
+</head>
+<body>
+  <div id="example">
+  </div>
+  <script type="text/babel">
+
+  var data = {header: ['c1', 'c2'], rows:[ [1, 0], [0, 1]]};
+
+  var ConstraintMatrix = React.createClass({
+    render: function() {
+      if (this.props.matrix.rows != null ) {
+        var constraintRows = this.props.matrix.rows.map(function(elem) {
+          return (
+            <ConstraintRow row={elem} />
+          );
+        });
+      }
+      return (
+        <div className="constraintMatrix">
+        <table>
+        <ConstraintHeader header={this.props.matrix.header}/>
+        {constraintRows}
+        </table>
+        </div>
+      );
+    }
+  });
+
+  var ConstraintHeader = React.createClass({
+    render: function() {
+      var constraintNodes = this.props.header.map(function(elem) {
+        return (
+          <th>{elem}</th>
+        );
+      });
+      return (
+        <div className="constraintHeader">
+        <tr>
+          {constraintNodes}
+        </tr>
+        </div>
+      );
+    }
+  });
+
+  var ConstraintRow = React.createClass({
+    render: function() {
+      var constraintNodes = this.props.row.map(function(elem) {
+        return (
+          <ConstraintElem result={elem} />
+        );
+      });
+      return (
+        <div className="constraintRow">
+        <tr>
+          {constraintNodes}
+        </tr>
+        </div>
+      );
+    }
+  });
+
+  var ConstraintElem = React.createClass({
+    render: function() {
+    /*
+      if (this.props.result == 0) {
+        var elem = '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>'
+      } else if (this.props.result == 1) {
+        var elem = '<span class="glyphicon glyphicon-ok" aria-hidden="true">'
+      }
+      */
+      if (this.props.result == 0) {
+        var elem = 'no'
+      } else if (this.props.result == 1) {
+        var elem = 'yes'
+      }
+      return (
+        <div className="constraintElem">
+        <td>
+        {elem}
+        </td>
+        </div>
+      );
+    }
+  });
+
+  ReactDOM.render(
+    <ConstraintMatrix matrix={data} />,
+    document.getElementById('example')
+  );
+  </script>
+</body>
+</html>
