@@ -1,8 +1,8 @@
-// var data = [{header: ['c1', 'c2'], rows:[ [1, 0], [0, 1]]}, {header: ['c1', 'c2'], rows:[ [0, 0], [1, 1]]}];
+var data = [{header: ['c1', 'c2'], rows:[ [1, 0], [0, 1]]}, {header: ['c1', 'c2'], rows:[ [0, 0], [1, 1]]}];
 
 var UserQuery = React.createClass({
   handleClick: function() {
-
+    /*
     $.ajax({
     url: this.props.url,
     dataType: 'json',
@@ -14,6 +14,8 @@ var UserQuery = React.createClass({
     console.error(this.props.url, status, err.toString());
     }.bind(this)
     });
+    */
+    this.setState({sess: data});
   },
   getInitialState: function() {
     return {sess: []};
@@ -65,14 +67,17 @@ var ResultSessions = React.createClass({
 });
 
 var Session = React.createClass({
-
+  format_time: function(timestamp) {
+    var result = new Date(parseInt(timestamp) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
+    return (result);
+  },
   render: function() {
     var divPanelStyle = {
       marginBottom: 30
     };
     var resultStyle = {
       float : 'right'
-    }
+    };
     if (this.props.result == 'success') {
       var resultClass = 'label label-success'
       if (this.props.special == 'acquaintance') {
@@ -90,7 +95,7 @@ var Session = React.createClass({
     return (
       <div className="panel panel-info" style={divPanelStyle}>
         <div className="panel-heading">
-          <span>访客 @ {format_time(1450183262)}</span>
+          <span>访客 @ {this.format_time(1450183262)}</span>
           <span className={resultClass} style={resultStyle}>{resultText}</span>
         </div>
         <VisitorInfo />
