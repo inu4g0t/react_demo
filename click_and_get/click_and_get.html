@@ -34,11 +34,9 @@
     },
     render: function() {
       return (
-        <div>
         <input type="text" ref="idTextInput" />
         <input type="button" value="Query" onClick={this.handleClick} />
         <CommentList data={this.state.data} />
-        </div>
       );
     }
   });
