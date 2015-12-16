@@ -2,23 +2,22 @@ var data = [{header: ['c1', 'c2'], rows:[ [1, 0], [0, 1]]}, {header: ['c1', 'c2'
 
 var UserQuery = React.createClass({
   handleClick: function() {
-    /*
+    var bid = $('#bid_input').val();
+    var send_url = this.props.url + bid;
     $.ajax({
-    url: this.props.url,
+    url: send_url,
     dataType: 'json',
     cache: false,
     success: function(data) {
-    this.setState({data: data});
+    this.setState({rdResult: data});
     }.bind(this),
     error: function(xhr, status, err) {
     console.error(this.props.url, status, err.toString());
     }.bind(this)
     });
-    */
-    this.setState({sess: data});
   },
   getInitialState: function() {
-    return {sess: []};
+    return {rdResult: {}};
   },
   render: function() {
     var divRowStyle = {
@@ -39,7 +38,8 @@ var UserQuery = React.createClass({
         <div className="row" style={divRowStyle}>
           <div className="col-lg-8">
             <div className="input-group">
-              <ResultSessions sess={this.state.sess} />
+              <ResultSessions sessions={this.state.rdResult.sessions}
+               constraintsMap = {this.state.rdResult.constraints_map} />
             </div>
           </div>
         </div>
@@ -51,10 +51,12 @@ var UserQuery = React.createClass({
 var ResultSessions = React.createClass({
 
   render: function() {
-    if (this.props.sess != null ) {
-      var resultSessions = this.props.sess.map(function(sess, index) {
+    var cm = this.props.constraintsMap
+    if (this.props.sessions != null ) {
+      var resultSessions = this.props.sessions.map(function(sess, index) {
         return (
-          <Session key={index} matrix={sess} result='success' />
+          <Session key={index} session={sess}
+           constraintsMap={cm} />
         );
       });
     }
@@ -78,16 +80,19 @@ var Session = React.createClass({
     var resultStyle = {
       float : 'right'
     };
-    if (this.props.result == 'success') {
+    if (this.props.session == null) {
+      return (null);
+    }
+    if (this.props.session.result == 'success') {
       var resultClass = 'label label-success'
-      if (this.props.special == 'acquaintance') {
+      if (this.props.session.special == 'acquaintance') {
         var resultText = '转接成功：熟客'
-      } else if (this.props.special == 'chatting') {
+      } else if (this.props.session.special == 'chatting') {
         var resultText = '转接成功：沟通中'
       } else {
         var resultText = '转接成功'
       }
-    } else if (this.props.result == 'queue') {
+    } else if (this.props.session.result == 'queue') {
       var resultClass = 'label label-warning'
       var resultText = '排队中'
     }
@@ -95,11 +100,13 @@ var Session = React.createClass({
     return (
       <div className="panel panel-info" style={divPanelStyle}>
         <div className="panel-heading">
-          <span>访客 @ {this.format_time(1450183262)}</span>
+          <span>访客 @ {this.format_time(this.props.session.time)}</span>
           <span className={resultClass} style={resultStyle}>{resultText}</span>
         </div>
         <VisitorInfo />
-        <ConstraintMatrix matrix={this.props.matrix} />
+        <ConstraintMatrix headers={this.props.session.constraints_vector}
+         constraintsMap={this.props.constraintsMap}
+         matrix={this.props.session.waiters} />
       </div>
     );
   }
@@ -108,7 +115,9 @@ var Session = React.createClass({
 var VisitorInfo = React.createClass({
   render: function() {
     return(
-      null
+      <table class="info_table">
+
+      </table>
     );
   }
 });
@@ -126,7 +135,8 @@ var ConstraintMatrix = React.createClass({
       <div className="constraintMatrix">
         <table className="info_table">
           <tbody>
-            <ConstraintHeader header={this.props.matrix.header}/>
+            <ConstraintHeader constraintsMap={this.props.constraintsMap}
+             header={this.props.headers}/>
             {constraintRows}
           </tbody>
         </table>
@@ -193,6 +203,6 @@ var ConstraintElem = React.createClass({
 });
 
 ReactDOM.render(
-  <UserQuery url='' />,
+  <UserQuery url='http://10.81.39.58/get_rd?bid=' />,
   document.getElementById('userQuery')
 );
