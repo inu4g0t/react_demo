@@ -34,7 +34,7 @@ var ClassSchedule = React.createClass({
             [{classId: 'empty', span: 1}, {classId: 'math', span: 2}],
             [{classId: 'empty', span: 1}, {classId: null, span: 0}],
         ];
-        return {classMatrix: allClasses, editing: false, handleFuntion: this.handleClick};
+        return {classMatrix: allClasses, editing: false, clickHandleFuntion: this.handleClick};
     },
     render: function() {
         var divRowStyle = {
@@ -55,7 +55,8 @@ var ClassSchedule = React.createClass({
                 </div>
                 <div className="row" style={divRowStyle}>
                     <div className="col-lg-8">
-                        <ClassCalender classMatrix={this.state.classMatrix} />
+                        <ClassCalender classMatrix={this.state.classMatrix}
+                          clickHandleFuntion={this.state.clickHandleFuntion}/>
                     </div>
                 </div>
             </div>
@@ -85,10 +86,12 @@ var ShowError = React.createClass({
 
 var ClassCalender = React.createClass({
     render: function() {
+        var handleClick = this.props.clickHandleFuntion;
         if (this.props.classMatrix != null ) {
             var daySchedules = this.props.classMatrix.map(function(day, index) {
                 return (
-                    <DaySchedule key={index} day={day} />
+                    <DaySchedule key={index} day={day}
+                      clickHandleFuntion={handleClick}/>
                 );
             });
         }
@@ -109,6 +112,7 @@ var ClassCalender = React.createClass({
 
 var DaySchedule = React.createClass({
     render: function() {
+        var handleClick = this.props.clickHandleFuntion;
         if (this.props.day != null ) {
             var classElems = this.props.day.map(function(elem, index) {
                 if (elem === null || elem.span === null
@@ -116,7 +120,8 @@ var DaySchedule = React.createClass({
                         return null;
                     }
                     return (
-                        <ClassElem key={index} elem={elem} />
+                        <ClassElem key={index} elem={elem}
+                          clickHandleFuntion={handleClick}/>
                     );
                 });
             }
@@ -132,7 +137,10 @@ var DaySchedule = React.createClass({
     var ClassElem = React.createClass({
         render: function() {
             return (
-                <td rowSpan={this.props.elem.span}>{this.props.elem.classId} </td>
+                <td rowSpan={this.props.elem.span}
+                  onClick={this.props.clickHandleFuntion}>
+                  {this.props.elem.classId}
+                </td>
             );
 
         }
